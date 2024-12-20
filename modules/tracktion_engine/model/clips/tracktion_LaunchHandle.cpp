@@ -57,7 +57,7 @@ void LaunchHandle::nudge (BeatDuration duration)
     if (currentPlayState.load (std::memory_order_acquire) != PlayState::playing)
         return;
 
-   #if __APPLE__ && __clang_major__ < 16
+   #if __APPLE__ && __clang_major__ < 16 || __ANDROID__
     double expected = nudgeBeats.load (std::memory_order_acquire);
     while (nudgeBeats.compare_exchange_weak (expected, expected + duration.inBeats()))
         ;
