@@ -34,6 +34,7 @@ namespace tracktion { inline namespace core
 /** Returns the CPU cycle count, useful for benchmarking. */
 inline std::uint64_t rdtsc()
 {
+    /*
     auto devDescr = juce::SystemStats::getDeviceDescription();
     if (devDescr.startsWith("iPhone")) {
         auto model = devDescr.substring(6, devDescr.length());
@@ -49,7 +50,12 @@ inline std::uint64_t rdtsc()
             }
         }
     }
-   #if TRACKTION_ARM && ! defined (_MSC_VER)
+     */
+    #if TRACKTION_ARM && defined(__aarch64__)
+    std::uint64_t result;
+    __asm__ __volatile("mrs %0, CNTPCT_EL0" : "=&r"(result));
+    return result;
+   #elif TRACKTION_ARM && ! defined (_MSC_VER)
     std::uint64_t result;
     __asm __volatile("mrs %0, CNTVCT_EL0" : "=&r" (result));
     return result;
