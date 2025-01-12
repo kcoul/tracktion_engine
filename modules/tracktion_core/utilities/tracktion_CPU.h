@@ -34,6 +34,21 @@ namespace tracktion { inline namespace core
 /** Returns the CPU cycle count, useful for benchmarking. */
 inline std::uint64_t rdtsc()
 {
+    auto devDescr = juce::SystemStats::getDeviceDescription();
+    if (devDescr.startsWith("iPhone")) {
+        auto model = devDescr.substring(6, devDescr.length());
+        if (devDescr.contains(",")) {
+            auto sepIdx = model.indexOf(",");
+            auto major = atoi(model.substring(0, sepIdx).toUTF8());
+            //auto minor = atoi(model.substring(sepIdx+1, model.length()).toUTF8());
+            if (major < 8) //iPhone 6 or older, won't support instructions below
+            {
+                std::uint64_t result;
+                asm volatile("isb;mrs %0, pmccntr_el0" : "=r"(result));
+                return result; //TODO: This seems to only be getting 0, may not be working, but doesn't crash at least...
+            }
+        }
+    }
    #if TRACKTION_ARM && ! defined (_MSC_VER)
     std::uint64_t result;
     __asm __volatile("mrs %0, CNTVCT_EL0" : "=&r" (result));
