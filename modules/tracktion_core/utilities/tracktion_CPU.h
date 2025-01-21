@@ -51,7 +51,7 @@ inline std::uint64_t rdtsc()
         }
     }
      */
-    #if TRACKTION_ARM && defined(__aarch64__)
+    #if TRACKTION_ARM && defined(__aarch64__) && JUCE_IOS
     std::uint64_t result;
     __asm__ __volatile("mrs %0, CNTPCT_EL0" : "=&r"(result));
     return result;

@@ -77,7 +77,8 @@ namespace crill::impl
                 if (pred())
                     return;
 
-                __wfe();
+				__asm ("wfe");
+                //__wfe();
             }
 
             // waiting longer than we should, let's give other threads a chance to recover
