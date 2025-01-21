@@ -166,9 +166,9 @@ namespace test_utilities
                                                 assert (*res == f);
                                                 callbackFinished = true;
                                             });
-
+#if JUCE_MODAL_LOOPS_PERMITTED
         test_utilities::runDispatchLoopUntilTrue (callbackFinished);
-
+#endif
         return loadBufferAndSampleRate (std::move (destFile));
     }
 
