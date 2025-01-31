@@ -839,7 +839,7 @@ public:
                             clickTrackEnabled,                  ///< Whether the click track is enabled.
                             clickTrackEmphasiseBars,            ///< Whether the click track should emphasise bars.
                             clickTrackRecordingOnly,            ///< Whether the click track should be audible only when recording.
-                            recordingPunchInOut,                ///< Whether recoridng only happens within the in/out markers.
+                            recordingPunchInOut,                ///< Whether recording only happens within the in/out markers.
                             playInStopEnabled;                  ///< Whether the audio engine should run when playback is stopped.
 
     juce::CachedValue<float> clickTrackGain;        ///< The gain of the click track.
