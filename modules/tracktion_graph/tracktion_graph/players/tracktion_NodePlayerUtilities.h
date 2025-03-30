@@ -65,7 +65,7 @@ namespace node_player_utils
             };
 
             for (auto id : duplicateIDs)
-                DBG("\t" << id << ": " << getNodeTypeStrings (id));
+                DBG("\t" << juce::String(id) << ": " << getNodeTypeStrings (id));
         }
        #endif
 
