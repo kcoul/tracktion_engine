@@ -41,7 +41,9 @@ BufferedFileReader::BufferedFileReader (juce::AudioFormatReader* sourceReader,
     for (size_t i = 0; i < numBlocksToBuffer; ++i)
     {
         // The following code makes the assumption that the pointers are at least 8-bit aligned
+#ifndef JUCE_ANDROID
         static_assert (alignof (BufferedBlock*) >= 8);
+#endif
         blocks.push_back (std::make_unique<BufferedBlock> (*source));
 
         // Check the least significant bit is actually 0
