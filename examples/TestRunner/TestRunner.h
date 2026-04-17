@@ -27,6 +27,8 @@
 
 #pragma once
 
+#include <cstdio>
+
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <tracktion_engine/../3rd_party/doctest/tracktion_doctest.hpp>
 
@@ -275,7 +277,18 @@ int main (int argv, char** argc)
         if (String (argc[i]) == "--junit-xml-file")
             if ((i + 1) < argv)
                 junitFile = String (argc[i + 1]);
-    
+
+    const auto logFile = File::getSpecialLocation (File::invokedExecutableFile)
+                             .getSiblingFile ("TestRunner.log");
+
+    if (auto* stream = std::freopen (logFile.getFullPathName().toRawUTF8(), "w", stdout))
+        setvbuf (stream, nullptr, _IOLBF, 0);
+
+    if (auto* stream = std::freopen (logFile.getFullPathName().toRawUTF8(), "a", stderr))
+        setvbuf (stream, nullptr, _IOLBF, 0);
+
+    std::cout << "Writing test log to " << logFile.getFullPathName() << "\n";
+
     ScopedJuceInitialiser_GUI init;
     return TestRunner::runTests (junitFile);
 }
