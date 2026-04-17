@@ -16,6 +16,24 @@
 
 namespace crill::impl
 {
+  #if CRILL_ARM_64BIT
+    inline void wait_for_event() noexcept
+    {
+       #if defined(__has_builtin)
+        #if __has_builtin(__builtin_arm_wfe)
+            __builtin_arm_wfe();
+            return;
+        #endif
+       #endif
+
+       #if defined(__GNUC__) || defined(__clang__)
+        __asm__ __volatile__("wfe" ::: "memory");
+       #else
+        std::this_thread::yield();
+       #endif
+    }
+  #endif
+
   #if CRILL_INTEL
     template <std::size_t N0, std::size_t N1, std::size_t N2, typename Predicate>
     void progressive_backoff_wait_intel(Predicate&& pred)
@@ -77,7 +95,7 @@ namespace crill::impl
                 if (pred())
                     return;
 
-                __wfe();
+                wait_for_event();
             }
 
             // waiting longer than we should, let's give other threads a chance to recover

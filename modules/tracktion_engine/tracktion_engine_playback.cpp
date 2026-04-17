@@ -18,7 +18,7 @@
  #include <juce_core/system/juce_TargetPlatform.h>
 
  // Ableton Link has to be included here before ReWire as ReWire seems to mess with some Windows defs
- #if (JUCE_WINDOWS || JUCE_MAC || JUCE_LINUX || JUCE_ANDROID)
+ #if (JUCE_WINDOWS || JUCE_MAC || JUCE_LINUX || JUCE_QNX || JUCE_ANDROID)
      #if JUCE_MAC
       #define LINK_PLATFORM_MACOSX  1
      #endif
@@ -27,7 +27,7 @@
       #define LINK_PLATFORM_WINDOWS 1
      #endif
 
-     #if JUCE_LINUX || JUCE_ANDROID
+     #if JUCE_LINUX || JUCE_QNX || JUCE_ANDROID
       #define LINK_PLATFORM_LINUX 1
      #endif
 
@@ -162,7 +162,7 @@ namespace tracktion
 #include "../3rd_party/crill/seqlock_object.h"
 
 //==============================================================================
-#if JUCE_LINUX || JUCE_WINDOWS
+#if JUCE_LINUX || JUCE_QNX || JUCE_WINDOWS
  #include <cstdarg>
 #endif
 

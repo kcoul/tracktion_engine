@@ -97,7 +97,7 @@ private:
 };
 
 //==============================================================================
-#if JUCE_LINUX
+#if JUCE_LINUX || JUCE_QNX
  constexpr bool shouldAddPluginWindowToDesktop = false;
 #else
  constexpr bool shouldAddPluginWindowToDesktop = true;
@@ -114,7 +114,7 @@ PluginWindow::PluginWindow (te::Plugin& plug)
 
     setBoundsConstrained (getLocalBounds() + plugin.windowState->choosePositionForPluginWindow());
 
-    #if JUCE_LINUX
+    #if JUCE_LINUX || JUCE_QNX
      setAlwaysOnTop (true);
      addToDesktop();
     #endif
