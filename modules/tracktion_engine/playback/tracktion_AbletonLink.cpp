@@ -210,7 +210,7 @@ struct AbletonLink::ImplBase  : public juce::Timer
 
 #if TRACKTION_ENABLE_ABLETON_LINK
 
-#if (JUCE_WINDOWS || JUCE_MAC || JUCE_LINUX || JUCE_ANDROID)
+#if (JUCE_WINDOWS || JUCE_MAC || JUCE_LINUX || JUCE_QNX || JUCE_ANDROID)
     //==========================================================================
     struct LinkImpl  : public AbletonLink::ImplBase
     {

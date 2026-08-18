@@ -64,7 +64,7 @@ bool isSystemOrTempFolder (const juce::File& f)
     auto progFiles = juce::File::getSpecialLocation (juce::File::globalApplicationsDirectory).getFullPathName();
     if (path.startsWithIgnoreCase (progFiles))
         return true;
-   #elif JUCE_LINUX
+   #elif JUCE_LINUX || JUCE_QNX
     if (path.startsWith ("/usr") || path.startsWith ("/var")
         || path.startsWith ("/etc") || path.startsWith ("/sys")
         || path.startsWith ("/proc"))
