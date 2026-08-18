@@ -110,10 +110,11 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "QNX")
   target_link_libraries(${TARGET_NAME} PRIVATE "-latomic")
 
-  if (NOT ${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64")
+  # -m64 is an x86 host flag; it does not apply to a QNX cross-build.
+  if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT ${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64")
     target_link_options(${TARGET_NAME} PRIVATE "-m64")
   endif()
 endif()
