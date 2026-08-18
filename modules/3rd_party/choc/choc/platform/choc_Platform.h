@@ -37,6 +37,7 @@
       - CHOC_WINDOWS
       - CHOC_ANDROID
       - CHOC_LINUX
+      - CHOC_QNX
       - CHOC_OSX
       - CHOC_IOS
       - CHOC_BSD
@@ -56,6 +57,10 @@
 #elif defined (LINUX) || defined (__linux__)
  #define  CHOC_LINUX 1
  #define  CHOC_OPERATING_SYSTEM_NAME   "Linux"
+#elif defined (__QNX__)
+ #define  CHOC_QNX 1
+ #define  CHOC_POSIX 1
+ #define  CHOC_OPERATING_SYSTEM_NAME   "QNX"
 #elif __APPLE__
  #define CHOC_APPLE 1
  #include <TargetConditionals.h>
