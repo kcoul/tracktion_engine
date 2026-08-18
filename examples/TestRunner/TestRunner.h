@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <cstdio>
 #include <span>
 
 #define DOCTEST_CONFIG_IMPLEMENT
@@ -275,10 +276,29 @@ namespace TestRunner
 
 
 //==============================================================================
+/** Redirects stdout and stderr to a file, line buffered so that whatever was
+    logged before a crash or a failed assertion still reaches the disk. Useful on
+    targets where the console output of the process is not captured, e.g. a board
+    launched over a connection that goes away with the test run.
+*/
+static bool redirectOutputTo (const File& logFile)
+{
+    const auto path = logFile.getFullPathName();
+
+    auto* out = std::freopen (path.toRawUTF8(), "w", stdout);
+    auto* err = std::freopen (path.toRawUTF8(), "a", stderr);
+
+    if (out != nullptr)  setvbuf (out, nullptr, _IOLBF, 0);
+    if (err != nullptr)  setvbuf (err, nullptr, _IOLBF, 0);
+
+    return out != nullptr && err != nullptr;
+}
+
+//==============================================================================
 //==============================================================================
 int main (int argc, char** argv)
 {
-    File junitFile;
+    File junitFile, logFile;
     bool runJuceTests = true;
     std::vector<const char*> doctestArgs;
 
@@ -289,6 +309,11 @@ int main (int argc, char** argv)
             if ((i + 1) < argc)
                 junitFile = String (argv[++i]);
         }
+        else if (String (argv[i]) == "--log-file")
+        {
+            if ((i + 1) < argc)
+                logFile = File::getCurrentWorkingDirectory().getChildFile (String (argv[++i]));
+        }
         else if (String (argv[i]) == "--no-juce-tests")
         {
             runJuceTests = false;
@@ -298,6 +323,9 @@ int main (int argc, char** argv)
             doctestArgs.push_back (argv[i]);
         }
     }
+
+    if (logFile != File() && ! redirectOutputTo (logFile))
+        std::cerr << "Failed to open log file " << logFile.getFullPathName() << std::endl;
 
     ScopedJuceInitialiser_GUI init;
     return TestRunner::runTests (junitFile, runJuceTests, doctestArgs);
