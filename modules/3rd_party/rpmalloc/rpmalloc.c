@@ -699,7 +699,12 @@ static pthread_key_t _memory_thread_heap;
 #    endif
 #    define TLS_MODEL
 #  else
-#    ifndef __HAIKU__
+/* Bionic rejects initial-exec TLS relocations in any library opened with
+   dlopen, which is how the JVM loads a JNI library. The IE model needs a slot
+   in the static TLS block, and that block is sized at process start. Leaving
+   the model unset gives TLSDESC here, which this file's other thread-locals
+   already use. */
+#    if !defined(__HAIKU__) && !defined(__ANDROID__)
 #      define TLS_MODEL __attribute__((tls_model("initial-exec")))
 #    else
 #      define TLS_MODEL
