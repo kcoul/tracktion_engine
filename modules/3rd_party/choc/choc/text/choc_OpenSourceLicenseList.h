@@ -128,8 +128,27 @@ PERFORMANCE OF THIS SOFTWARE.
 
 inline OpenSourceLicenseList& OpenSourceLicenseList::getInstance()
 {
-    static OpenSourceLicenseList instance;
-    return instance;
+    // ZENBOX PATCH (2026-10-03): leaked deliberately, never destroyed.
+    //
+    // As a function-local static this was destroyed at exit via __cxa_atexit,
+    // and in the iOS simulator test host that aborted inside libsystem_malloc
+    // every few runs: "Zenbox quit unexpectedly" over a suite that had already
+    // passed, since it fires after _XCTestMain returns. The registrars that
+    // populate it are `static inline` namespace-scope variables, so across the
+    // host's image split (app dylib + XCTest bundle + the static engine lib)
+    // this singleton could be registered for destruction twice and the second
+    // run freed an already-freed std::vector<std::string>.
+    //
+    // Leaking it is the standard fix for exit-time destruction of a process-wide
+    // singleton: the licence text is wanted for the whole process lifetime and
+    // the OS reclaims it anyway, so there is nothing for a destructor to do.
+    //
+    // CARRY THIS THROUGH SUBMODULE BUMPS, like the VST3 getBusProperties patch
+    // in our JUCE fork (see CLAUDE.md, Altiverb/Windows). It lives in
+    // tracktion_engine's 3rd_party tree, so a plain `git submodule update` will
+    // silently drop it and the crash returns.
+    static auto* instance = new OpenSourceLicenseList();
+    return *instance;
 }
 
 inline std::string OpenSourceLicenseList::getAllLicenseText()
